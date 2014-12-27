@@ -47,7 +47,7 @@ def check_hand_for_pairs(playerhand):
 				match.append(checkhand[x])
 				position.append(x)
 				#print position
-		
+				print "for check hand, the match so far is ", match
 		if len(match) == 4:
 			print "COMPLETECOMPLETE COMPLETECOMPLETE", checkhand[position[0]], checkhand[position[1]], checkhand[position[2]], checkhand[position[3]]
 			print "position[0] ", position[0]
@@ -73,11 +73,13 @@ def check_hand_for_pairs(playerhand):
 def ask_for_cards(playerAskerhand, playerReceiverhand, deck, asker_score, receiver_score):
 
 	player_request = best_guess(playerAskerhand)
+	check_hand_for_pairs(playerAskerhand)
 	#player_request = int(raw_input("%s, what card would you like? > " % playerAsker))
 	#player_request = random.randint(0,52)
 
 	if len(playerReceiverhand) == 0:
 		#print "the receiver has no cards left.  "
+
 		die()
 	elif player_request in playerReceiverhand:
 		playerAskerhand.append(player_request)
@@ -86,14 +88,19 @@ def ask_for_cards(playerAskerhand, playerReceiverhand, deck, asker_score, receiv
 		
 		
 		if True == check_hand_for_pairs(playerAskerhand):
+			
+			print "the asker got a point"
 			return [1,0]
 		else:
+			print "no one got a point"
 			return [0,0]
 
 		go_fish(playerReceiverhand, deck)
 		if True == check_hand_for_pairs(playerReceiverhand):
+			print "the receiver got a point"
 			return [0,1]
 		else: 
+			print ""
 			return [0,0]
 
 		#ask_for_cards(playerAskerhand, playerReceiverhand, deck, asker_score, receiver_score)
@@ -177,7 +184,9 @@ def best_guess(playerhand):
 				position.append(x)
 				#print position
 				print "the match so far is ", match
-		
+		if len(match) == 4:
+			print "I caught a match here"
+			print match
 		if len(match) == 3:
 			matchsum = match[0][0] + match[1][0] + match[2][0]
 			difference = 3 * match[0][1]
@@ -238,10 +247,6 @@ def choose_random_outside_your_hand(playerhand):
 	for i in playerhand:
 		full_deck.remove(i)
 	random_choice = random.randint(0, len(full_deck)-1)
-	print "the length of the full deck is ", len(full_deck)
-	print "your hand is ", playerhand
-	print "the remaining deck should be ", full_deck
-	print "random choice outside your hand is ", random_choice
 	ask_for = full_deck[random_choice]
 	return ask_for
 
