@@ -22,9 +22,7 @@ def draw_first_hand(player, deck):
 	
 	return deck, hand
 
-	#print "%r's hand" %player, hand
 
-	#check_hand_for_pairs(hand)
 
 def check_hand_for_pairs(playerhand):
 
@@ -38,8 +36,11 @@ def check_hand_for_pairs(playerhand):
 
 	match = []
 	position = []
+	
+	guess_list = range(0,13)
+	shuffle(guess_list)
 
-	for i in range(0,13):
+	for i in guess_list:
 		#print i, " outer"
 		for x in range(0, len(checkhand)):
 			
@@ -52,28 +53,27 @@ def check_hand_for_pairs(playerhand):
 			print "COMPLETECOMPLETE COMPLETECOMPLETE", checkhand[position[0]], checkhand[position[1]], checkhand[position[2]], checkhand[position[3]]
 			print "position[0] ", position[0]
 			#print playerhand
-			print "match ", match[0]
+			#print "match ", match[0]
 			playerhand.remove(match[0][0])
-			print "hand without match0 ", playerhand
+			#print "hand without match0 ", playerhand
 			playerhand.remove(match[1][0])
-			print "hand without match1 ", playerhand
+			#print "hand without match1 ", playerhand
 			playerhand.remove(match[2][0])
-			print "hand without match2 ", playerhand
+			#print "hand without match2 ", playerhand
 			playerhand.remove(match[3][0])
-			print "hand without match3 ", playerhand
+			#print "hand without match3 ", playerhand
 			
-			return True
-			match = []
-			position = []
+			return 1, playerhand
+			
 		else:
-			match = []
-			position = []
-			return False
-	
-def ask_for_cards(playerAskerhand, playerReceiverhand, deck, asker_score, receiver_score):
+			
+			return 0, playerhand
+		match = []
+		position = []
+
+def ask_for_cards(playerAskerhand, playerReceiverhand, deck):
 
 	player_request = best_guess(playerAskerhand)
-	check_hand_for_pairs(playerAskerhand)
 	#player_request = int(raw_input("%s, what card would you like? > " % playerAsker))
 	#player_request = random.randint(0,52)
 
@@ -84,60 +84,55 @@ def ask_for_cards(playerAskerhand, playerReceiverhand, deck, asker_score, receiv
 	elif player_request in playerReceiverhand:
 		playerAskerhand.append(player_request)
 		playerReceiverhand.remove(player_request)
-		#print "they had the card the asker wanted, %r" % player_request
-		
-		
-		if True == check_hand_for_pairs(playerAskerhand):
-			
-			print "the asker got a point"
-			return [1,0]
-		else:
-			print "no one got a point"
-			return [0,0]
-
-		go_fish(playerReceiverhand, deck)
-		if True == check_hand_for_pairs(playerReceiverhand):
-			print "the receiver got a point"
-			return [0,1]
-		else: 
-			print ""
-			return [0,0]
-
-		#ask_for_cards(playerAskerhand, playerReceiverhand, deck, asker_score, receiver_score)
+		#ask_for_cards(playerAskerhand, playerReceiverhand, deck)
 		
 	else:
 		go_fish(playerAskerhand, deck)
-		if True == check_hand_for_pairs(playerAskerhand):
-			return [1,0]
-		else:
-			return [0,0]
-
+	
+	return playerAskerhand, playerReceiverhand, deck
+		
 def go_fish(playerhand, deck):
 	if len(deck) == 0:
-		check_hand_for_pairs(playerhand)
-		die()
+		print "looping"
 
 	else:
 		playerhand.append(deck[0])
 		deck.pop(0)
+
 
 def play_back_and_forth(player1, player2, player1hand, player2hand, deck):
 	
 	whose_turn_is_it = 0
 	score_player1 = 0
 	score_player2 = 0
+	print "what is going on? whose turn is it: ", whose_turn_is_it
 
 	while True:
 		if whose_turn_is_it%2 == 0:
+			
 			playerasker, playeraskerhand = player1, player1hand
-			print "player asker is %r and player receiver is %r " % (player1, player2)
 			playerreceiver, playerreceiverhand = player2, player2hand
 
+			print "whose turn is it, ", whose_turn_is_it
+			print "%r's hand is %r" % (playerasker, playeraskerhand)
+			print "XXXXXXXXXXplayer asker is %r and player receiver is %r " % (player1, player2)
 			#print "play back and forth on %r's turn" % player1, player1hand
 			
-			scores = ask_for_cards(playeraskerhand, playerreceiverhand, deck, score_player1, score_player2)
-			score_player1 += scores[0]
-			score_player2 += scores[1]
+			playeraskerhand, playerreceiverhand, deck = ask_for_cards(playeraskerhand, playerreceiverhand, deck)
+			x, playeraskerhand = check_hand_for_pairs(playeraskerhand)
+			#why doesn't check hand for pairs work as well as best guess? 
+			
+			if x == 1:
+				score_player1 += 1
+				print "%r's score is %r" % (player1, score_player1)
+			elif x == 0:
+				print "check hand for pairs didn't result in any score"
+			y, playerreceiverhand = check_hand_for_pairs(playerreceiverhand)
+			if y == 1:
+				score_player2 += 1
+				print "%r's score is %r" % (player2, score_player2)
+			elif x == 0:
+				print "check hand for pairs didn't result in any score"
 			
 			print "After asking for cards, %r's score is %r, %r's score is %r" % (player1, score_player1, player2, score_player2)
 			whose_turn_is_it += 1
@@ -145,13 +140,26 @@ def play_back_and_forth(player1, player2, player1hand, player2hand, deck):
 			
 
 		elif whose_turn_is_it%2 != 0:
+			print "YYYYYYYYplayer asker is %r and player receiver is %r " % (player2, player1)
 			playerasker, playeraskerhand = player2, player2hand
-			print "player asker is %r and player receiver is %r " % (player1, player2)
+			
 			playerreceiver, playerreceiverhand = player1, player1hand
 			#print player2hand
-			scores= ask_for_cards(playeraskerhand, playerreceiverhand, deck, score_player2, score_player1)
-			score_player1 += scores[0]
-			score_player2 += scores[1]
+			playeraskerhand, playerreceiverhand, deck = ask_for_cards(playeraskerhand, playerreceiverhand, deck)
+			
+			x, playeraskerhand = check_hand_for_pairs(playeraskerhand)
+			if x == 1:
+				score_player2 += 1
+				print "%r's score is %r" % (player2, score_player2)
+			elif x == 0:
+				print "check hand for pairs didn't result in any score"
+			y, playerreceiverhand = check_hand_for_pairs(playerreceiverhand)
+			if y == 1:
+				score_player1 += 1
+				print "%r's score is %r" % (player1, score_player1)
+			elif x == 0:
+				print "check hand for pairs didn't result in any score"
+			
 
 			print "After asking for cards, %r's score is %r, %r's score is %r" % (player1, score_player1, player2, score_player2)
 			whose_turn_is_it +=1
@@ -175,6 +183,7 @@ def best_guess(playerhand):
 
 	guess_list = range(0,13)
 	shuffle(guess_list)
+
 	for i in guess_list:
 		#print i, " outer"
 		for x in range(0,len(checkhand)):
@@ -186,7 +195,7 @@ def best_guess(playerhand):
 				print "the match so far is ", match
 		if len(match) == 4:
 			print "I caught a match here"
-			print match
+
 		if len(match) == 3:
 			matchsum = match[0][0] + match[1][0] + match[2][0]
 			difference = 3 * match[0][1]
@@ -261,5 +270,10 @@ print deck, player1hand
 deck, player2hand = draw_first_hand(player2, deck)
 print deck, player2hand
 
-player1score, player2score = play_back_and_forth(player1, player2, player1hand, player2hand, deck)
-print player1score, player2score
+scoreplayer1, scoreplayer2 = play_back_and_forth(player1, player2, player1hand, player2hand, deck)
+if scoreplayer1>scoreplayer2:
+	print "%r won!" % player1
+elif scoreplayer2>score_player1:
+	print "%r won!" % player2
+else:
+	print "It was a tie, apparently. Play again to see who's dominant."
