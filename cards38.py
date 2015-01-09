@@ -50,18 +50,12 @@ def check_hand_for_pairs(playerhand):
 				#print position
 				print "for check hand, the match so far is ", match
 		if len(match) == 4:
-			print "COMPLETECOMPLETE COMPLETECOMPLETE", checkhand[position[0]], checkhand[position[1]], checkhand[position[2]], checkhand[position[3]]
-			print "position[0] ", position[0]
-			#print playerhand
-			#print "match ", match[0]
+			print "We found a match! It's these cards: ", checkhand[position[0]], checkhand[position[1]], checkhand[position[2]], checkhand[position[3]]
+			
 			playerhand.remove(match[0][0])
-			#print "hand without match0 ", playerhand
 			playerhand.remove(match[1][0])
-			#print "hand without match1 ", playerhand
 			playerhand.remove(match[2][0])
-			#print "hand without match2 ", playerhand
 			playerhand.remove(match[3][0])
-			#print "hand without match3 ", playerhand
 			
 			return 1, playerhand
 			
@@ -80,7 +74,7 @@ def ask_for_cards(playerAskerhand, playerReceiverhand, deck):
 	if len(playerReceiverhand) == 0:
 		#print "the receiver has no cards left.  "
 
-		die()
+		die(playerAskerhand, playerReceiverhand)
 	elif player_request in playerReceiverhand:
 		playerAskerhand.append(player_request)
 		playerReceiverhand.remove(player_request)
@@ -93,7 +87,7 @@ def ask_for_cards(playerAskerhand, playerReceiverhand, deck):
 		
 def go_fish(playerhand, deck):
 	if len(deck) == 0:
-		print "looping"
+		die()
 
 	else:
 		playerhand.append(deck[0])
@@ -193,8 +187,8 @@ def best_guess(playerhand):
 				position.append(x)
 				#print position
 				print "the match so far is ", match
-		if len(match) == 4:
-			print "I caught a match here"
+		"""if len(match) == 4:
+									print "I caught a match here"""
 
 		if len(match) == 3:
 			matchsum = match[0][0] + match[1][0] + match[2][0]
@@ -261,6 +255,13 @@ def choose_random_outside_your_hand(playerhand):
 
 def die():
 	print "The game is done!"
+
+	"""if player1score>player2score:
+					print "The game is done! Player1 won with %r points, whereas that fucking loser Player2 only had %r points." % (player1score, player2score)
+				elif player2score>player1score:
+					print "The game is done! Player2 won with %r points, whereas that fucking loser Player1 only had %r points." % (player2score, player1score)
+				else:
+					print "You guys tied. The most boring outcome."""
 	exit(0)
 
 
